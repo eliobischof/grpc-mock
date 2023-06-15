@@ -1,4 +1,4 @@
-module github.com/monlabs/grpc-mock
+module github.com/eliobischof/grpc-mock
 
 go 1.13
 
