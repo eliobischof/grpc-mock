@@ -5,7 +5,6 @@ import (
 	"compress/gzip"
 	"context"
 	"flag"
-	"fmt"
 	"net"
 	"net/http"
 	"os"
@@ -81,22 +80,21 @@ func main() {
 	if err != nil {
 		log.Fatalf("start mock server failed: %v", err)
 	}
+	defer mockServer.Stop()
 
 	signals := make(chan os.Signal, 1)
-	go signal.Notify(signals, os.Interrupt, syscall.SIGPIPE, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGABRT)
-
-	sig := <-signals
-	fmt.Printf("received signal %s, cleaning up\n", sig.String())
-	switch sig {
-	case syscall.SIGPIPE:
-	case syscall.SIGINT:
-		fallthrough
-	default:
-		if err := mockServer.Stop(); err != nil {
-			panic(err)
+	signal.Notify(signals, syscall.SIGPIPE, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGABRT)
+	for {
+		select {
+		case sig := <-signals:
+			switch sig {
+			case syscall.SIGPIPE:
+			case syscall.SIGINT:
+				fallthrough
+			default:
+				return
+			}
 		}
-		fmt.Println("stopped the mock server")
-		syscall.Exit(0)
 	}
 }
 
