@@ -5,6 +5,7 @@ import (
 	"compress/gzip"
 	"context"
 	"flag"
+	"fmt"
 	"net"
 	"net/http"
 	"os"
@@ -80,6 +81,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("start mock server failed: %v", err)
 	}
+	fmt.Println("grpc server is listening on ", mockAddr)
 	defer mockServer.Stop()
 
 	signals := make(chan os.Signal, 1)
@@ -165,6 +167,7 @@ func startAPIServer(addr string, svr mockpb.MockServer) {
 	if err != nil {
 		log.Fatalf("api server serve failed: %v", err)
 	}
+	fmt.Println("api server is listening on ", lsn.Addr().String())
 }
 
 func startMockServer(addr string, sds []*grpc.ServiceDesc) {
