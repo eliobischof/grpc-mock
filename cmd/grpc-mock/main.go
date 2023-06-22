@@ -163,11 +163,11 @@ func startAPIServer(addr string, svr mockpb.MockServer) {
 	mockpb.RegisterMockHandlerServer(context.Background(), mux, svr)
 
 	log.Infof("api server starts on %v", lsn.Addr().String())
+	fmt.Println("api server is listening on ", lsn.Addr().String())
 	err = http.Serve(lsn, mux)
 	if err != nil {
 		log.Fatalf("api server serve failed: %v", err)
 	}
-	fmt.Println("api server is listening on ", lsn.Addr().String())
 }
 
 func startMockServer(addr string, sds []*grpc.ServiceDesc) {
